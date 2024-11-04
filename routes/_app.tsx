@@ -8,7 +8,7 @@ export default function App({ Component }: PageProps) {
         <title>tomaNotas</title>
         <link rel="stylesheet" href="/styles.css" />
       </head>
-      <body>
+      <body class="bg-slate-900 text-slate-300 ">
         <Component />
       </body>
     </html>

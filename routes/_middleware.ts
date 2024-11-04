@@ -1,22 +1,25 @@
 import { FreshContext } from "$fresh/server.ts";
-import { getUserBySession, UserEntity } from "@/utils/db.ts";
+
 import { getSessionId } from "@/utils/kvOauthHelpers.ts";
+import { getUserBySessionId, User } from "@/db/models/userModel.ts";
 
 export interface State {
     sessionId?: string;
-    user?: UserEntity;
+    user?: User;
 }
 
 export async function handler(
     req: Request,
-    ctx: FreshContext<State>,
+    ctx: FreshContext<State, any>,
 ) {
+    if (ctx.destination !== "route") return ctx.next();
     const sessionId = await getSessionId(req);
-    ctx.state.sessionId = sessionId;
 
     if (sessionId) {
-        const user = await getUserBySession(sessionId);
-        if (user) ctx.state.user = user;
+        const user = await getUserBySessionId(sessionId);
+        ctx.state.sessionId = sessionId;
+        ctx.state.user = user;
     }
+
     return await ctx.next();
 }
